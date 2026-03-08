@@ -21,6 +21,7 @@ export default function NotesPanel() {
   const [generating, setGenerating] = useState(false);
   const [subject, setSubject] = useState("");
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchNotes = async () => {
     if (!user) return;
