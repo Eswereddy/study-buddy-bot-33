@@ -3,10 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GraduationCap, Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { GraduationCap, Mail, Lock, User, ArrowRight, Loader2, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 
-export default function AuthPage() {
+interface AuthPageProps {
+  onBack?: () => void;
+}
+
+export default function AuthPage({ onBack }: AuthPageProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -76,6 +80,11 @@ export default function AuthPage() {
       {/* Right: Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
+          {onBack && (
+            <button onClick={onBack} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
+              <ChevronLeft className="h-4 w-4" /> Back to home
+            </button>
+          )}
           <div className="lg:hidden flex items-center gap-2 mb-8">
             <GraduationCap className="h-7 w-7 text-primary" />
             <span className="font-heading text-xl font-bold">StudyAI</span>
