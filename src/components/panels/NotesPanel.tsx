@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Plus, BookOpen, Loader2, Trash2, Download, Search, Pencil, Save, X } from "lucide-react";
+import { Plus, BookOpen, Loader2, Trash2, Download, Search, Pencil, Save, X, FileText, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +26,9 @@ export default function NotesPanel() {
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [saving, setSaving] = useState(false);
+  const [manualTitle, setManualTitle] = useState("");
+  const [manualContent, setManualContent] = useState("");
+  const [creatingManual, setCreatingManual] = useState(false);
 
   const fetchNotes = async () => {
     if (!user) return;
@@ -60,6 +63,26 @@ export default function NotesPanel() {
       toast.error(err.message);
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const createManualNote = async () => {
+    if (!manualTitle.trim()) return;
+    try {
+      await supabase.from("notes").insert({
+        user_id: user!.id,
+        title: manualTitle,
+        content: manualContent,
+        subject: manualTitle,
+        source_type: "manual",
+      });
+      setManualTitle("");
+      setManualContent("");
+      setCreatingManual(false);
+      await fetchNotes();
+      toast.success("Note created!");
+    } catch (err: any) {
+      toast.error(err.message);
     }
   };
 
@@ -188,9 +211,14 @@ export default function NotesPanel() {
     <div className="max-w-2xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{filteredNotes.length} notes</p>
-        <Button size="sm" onClick={() => setCreating(!creating)}>
-          <Plus className="h-4 w-4 mr-1" /> AI Notes
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={() => { setCreatingManual(!creatingManual); setCreating(false); }}>
+            <FileText className="h-4 w-4 mr-1" /> New Note
+          </Button>
+          <Button size="sm" onClick={() => { setCreating(!creating); setCreatingManual(false); }}>
+            <Sparkles className="h-4 w-4 mr-1" /> AI Notes
+          </Button>
+        </div>
       </div>
 
       <div className="relative">
@@ -202,6 +230,25 @@ export default function NotesPanel() {
           className="pl-10"
         />
       </div>
+
+      {creatingManual && (
+        <div className="bg-card border border-border rounded-xl p-4 space-y-3 animate-fade-in">
+          <Input
+            placeholder="Note title"
+            value={manualTitle}
+            onChange={(e) => setManualTitle(e.target.value)}
+          />
+          <Textarea
+            placeholder="Write your note content (Markdown supported)..."
+            value={manualContent}
+            onChange={(e) => setManualContent(e.target.value)}
+            className="min-h-[150px]"
+          />
+          <Button onClick={createManualNote} disabled={!manualTitle.trim()} className="w-full">
+            Create Note
+          </Button>
+        </div>
+      )}
 
       {creating && (
         <div className="bg-card border border-border rounded-xl p-4 space-y-3 animate-fade-in">
