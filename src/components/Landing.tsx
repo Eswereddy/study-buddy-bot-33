@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { BookOpen, Brain, MessageCircle, Calendar, BarChart3, FileText, ArrowRight } from "lucide-react";
+import { BookOpen, Brain, MessageCircle, Calendar, BarChart3, FileText, ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const features = [
