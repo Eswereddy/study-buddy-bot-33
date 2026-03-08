@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, Brain, MessageCircle, Calendar, BarChart3, FileText, Menu, X, GraduationCap, LogOut } from "lucide-react";
+import { BookOpen, Brain, MessageCircle, Calendar, BarChart3, FileText, Menu, X, GraduationCap, LogOut, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import NotesPanel from "./panels/NotesPanel";
@@ -8,6 +8,7 @@ import ChatPanel from "./panels/ChatPanel";
 import SchedulePanel from "./panels/SchedulePanel";
 import ProgressPanel from "./panels/ProgressPanel";
 import SummaryPanel from "./panels/SummaryPanel";
+import ProfilePanel from "./panels/ProfilePanel";
 
 const tabs = [
   { id: "summary", label: "PDF Summary", icon: FileText },
@@ -16,6 +17,7 @@ const tabs = [
   { id: "chat", label: "AI Tutor", icon: MessageCircle },
   { id: "schedule", label: "Schedule", icon: Calendar },
   { id: "progress", label: "Progress", icon: BarChart3 },
+  { id: "profile", label: "Profile", icon: UserCircle },
 ] as const;
 
 type TabId = (typeof tabs)[number]["id"];
@@ -32,6 +34,7 @@ export default function Dashboard() {
     chat: <ChatPanel />,
     schedule: <SchedulePanel />,
     progress: <ProgressPanel />,
+    profile: <ProfilePanel />,
   };
 
   return (
