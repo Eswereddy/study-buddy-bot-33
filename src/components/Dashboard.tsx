@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BookOpen, Brain, MessageCircle, Calendar, BarChart3, FileText, Menu, X, GraduationCap, LogOut, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import NotesPanel from "./panels/NotesPanel";
 import QuizPanel from "./panels/QuizPanel";
 import ChatPanel from "./panels/ChatPanel";
@@ -23,9 +25,23 @@ const tabs = [
 type TabId = (typeof tabs)[number]["id"];
 
 export default function Dashboard() {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabId>("summary");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null }>({ display_name: null, avatar_url: null });
+
+  useEffect(() => {
+    if (user) {
+      supabase
+        .from("profiles")
+        .select("display_name, avatar_url")
+        .eq("user_id", user.id)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data) setProfile(data);
+        });
+    }
+  }, [user, activeTab]);
 
   const panels: Record<TabId, React.ReactNode> = {
     summary: <SummaryPanel />,
