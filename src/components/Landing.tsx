@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { BookOpen, Brain, MessageCircle, Calendar, BarChart3, FileText, ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const features = [
   { icon: FileText, title: "PDF Summaries", desc: "Upload textbooks and get instant AI-generated summaries" },
