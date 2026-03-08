@@ -66,6 +66,26 @@ export default function NotesPanel() {
     }
   };
 
+  const createManualNote = async () => {
+    if (!manualTitle.trim()) return;
+    try {
+      await supabase.from("notes").insert({
+        user_id: user!.id,
+        title: manualTitle,
+        content: manualContent,
+        subject: manualTitle,
+        source_type: "manual",
+      });
+      setManualTitle("");
+      setManualContent("");
+      setCreatingManual(false);
+      await fetchNotes();
+      toast.success("Note created!");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
   const deleteNote = async (id: string) => {
     await supabase.from("notes").delete().eq("id", id);
     if (selectedNote?.id === id) setSelectedNote(null);
