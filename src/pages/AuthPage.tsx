@@ -261,6 +261,7 @@ export default function AuthPage({ onBack }: AuthPageProps) {
                 </button>
               </p>
             </>
+          )}
         </div>
       </div>
     </div>
