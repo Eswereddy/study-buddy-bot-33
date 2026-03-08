@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { Plus, BookOpen, Loader2, Trash2, Download } from "lucide-react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { Plus, BookOpen, Loader2, Trash2, Download, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +21,7 @@ export default function NotesPanel() {
   const [generating, setGenerating] = useState(false);
   const [subject, setSubject] = useState("");
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchNotes = async () => {
     if (!user) return;
@@ -64,10 +65,18 @@ export default function NotesPanel() {
     await fetchNotes();
   };
 
+  const filteredNotes = useMemo(() => {
+    if (!searchQuery.trim()) return notes;
+    const q = searchQuery.toLowerCase();
+    return notes.filter(
+      (n) =>
+        n.title.toLowerCase().includes(q) ||
+        (n.content || "").toLowerCase().includes(q) ||
+        (n.subject || "").toLowerCase().includes(q)
+    );
+  }, [notes, searchQuery]);
+
   const handleExportNote = (note: Note) => {
-    const container = document.createElement("div");
-    const root = document.createElement("div");
-    // Render markdown to HTML for export
     import("react-dom/server").then(({ renderToStaticMarkup }) => {
       const html = renderToStaticMarkup(<ReactMarkdown>{note.content || ""}</ReactMarkdown>);
       try {
@@ -103,10 +112,20 @@ export default function NotesPanel() {
   return (
     <div className="max-w-2xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{notes.length} notes</p>
+        <p className="text-sm text-muted-foreground">{filteredNotes.length} notes</p>
         <Button size="sm" onClick={() => setCreating(!creating)}>
           <Plus className="h-4 w-4 mr-1" /> AI Notes
         </Button>
+      </div>
+
+      <div className="relative">
+        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search notes by title, content, or subject..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
       {creating && (
@@ -130,8 +149,13 @@ export default function NotesPanel() {
           <BookOpen className="h-10 w-10 mx-auto mb-3 opacity-50" />
           <p>No notes yet. Generate your first AI notes!</p>
         </div>
+      ) : filteredNotes.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <Search className="h-10 w-10 mx-auto mb-3 opacity-50" />
+          <p>No notes match "{searchQuery}"</p>
+        </div>
       ) : (
-        notes.map((n) => (
+        filteredNotes.map((n) => (
           <div
             key={n.id}
             className="card-elevated bg-card rounded-xl border border-border p-5 cursor-pointer"
