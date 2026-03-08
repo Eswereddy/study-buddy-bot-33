@@ -80,6 +80,11 @@ export default function AuthPage({ onBack }: AuthPageProps) {
       {/* Right: Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
+          {onBack && (
+            <button onClick={onBack} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
+              <ChevronLeft className="h-4 w-4" /> Back to home
+            </button>
+          )}
           <div className="lg:hidden flex items-center gap-2 mb-8">
             <GraduationCap className="h-7 w-7 text-primary" />
             <span className="font-heading text-xl font-bold">StudyAI</span>
