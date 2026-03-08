@@ -101,13 +101,34 @@ export default function NotesPanel() {
     );
   }
 
+  const filteredNotes = useMemo(() => {
+    if (!searchQuery.trim()) return notes;
+    const q = searchQuery.toLowerCase();
+    return notes.filter(
+      (n) =>
+        n.title.toLowerCase().includes(q) ||
+        (n.content || "").toLowerCase().includes(q) ||
+        (n.subject || "").toLowerCase().includes(q)
+    );
+  }, [notes, searchQuery]);
+
   return (
     <div className="max-w-2xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{notes.length} notes</p>
+        <p className="text-sm text-muted-foreground">{filteredNotes.length} notes</p>
         <Button size="sm" onClick={() => setCreating(!creating)}>
           <Plus className="h-4 w-4 mr-1" /> AI Notes
         </Button>
+      </div>
+
+      <div className="relative">
+        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search notes by title, content, or subject..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
       {creating && (
