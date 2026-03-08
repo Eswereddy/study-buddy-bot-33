@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Upload, FileText, Sparkles, Loader2, File } from "lucide-react";
+import { Upload, FileText, Sparkles, Loader2, File, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { callStudyAI } from "@/lib/ai";
@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
+import { exportToPdf } from "@/lib/export-pdf";
 
 export default function SummaryPanel() {
   const { user } = useAuth();
