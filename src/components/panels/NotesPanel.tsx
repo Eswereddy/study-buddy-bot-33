@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Plus, BookOpen, Loader2, Trash2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Plus, BookOpen, Loader2, Trash2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { callStudyAI } from "@/lib/ai";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
+import { exportToPdf } from "@/lib/export-pdf";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Note = Tables<"notes">;
