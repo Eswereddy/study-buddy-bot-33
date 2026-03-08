@@ -26,7 +26,6 @@ export default function NotesPanel() {
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [saving, setSaving] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchNotes = async () => {
     if (!user) return;
