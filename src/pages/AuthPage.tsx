@@ -110,10 +110,10 @@ export default function AuthPage({ onBack }: AuthPageProps) {
           </div>
 
           <h1 className="font-heading text-2xl font-bold mb-2">
-            {isLogin ? "Welcome back" : "Create your account"}
+            {isForgotPassword ? "Reset your password" : isLogin ? "Welcome back" : "Create your account"}
           </h1>
           <p className="text-muted-foreground mb-8">
-            {isLogin ? "Sign in to continue studying" : "Start your AI-powered learning journey"}
+            {isForgotPassword ? "Enter your email and we'll send you a reset link" : isLogin ? "Sign in to continue studying" : "Start your AI-powered learning journey"}
           </p>
 
           {isForgotPassword ? (
