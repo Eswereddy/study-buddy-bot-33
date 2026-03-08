@@ -149,8 +149,13 @@ export default function NotesPanel() {
           <BookOpen className="h-10 w-10 mx-auto mb-3 opacity-50" />
           <p>No notes yet. Generate your first AI notes!</p>
         </div>
+      ) : filteredNotes.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <Search className="h-10 w-10 mx-auto mb-3 opacity-50" />
+          <p>No notes match "{searchQuery}"</p>
+        </div>
       ) : (
-        notes.map((n) => (
+        filteredNotes.map((n) => (
           <div
             key={n.id}
             className="card-elevated bg-card rounded-xl border border-border p-5 cursor-pointer"
