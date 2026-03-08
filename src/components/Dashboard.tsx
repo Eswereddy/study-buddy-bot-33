@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { BookOpen, Brain, MessageCircle, Calendar, BarChart3, FileText, Menu, X, GraduationCap, LogOut, UserCircle } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
@@ -117,9 +118,10 @@ export default function Dashboard() {
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSidebarOpen(true)}>
             {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
-          <h1 className="font-heading font-semibold text-lg">
+          <h1 className="font-heading font-semibold text-lg flex-1">
             {tabs.find((t) => t.id === activeTab)?.label}
           </h1>
+          <ThemeToggle />
         </header>
         <div className="flex-1 overflow-auto p-6">{panels[activeTab]}</div>
       </main>
