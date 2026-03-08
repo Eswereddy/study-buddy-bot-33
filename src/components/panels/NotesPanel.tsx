@@ -65,10 +65,18 @@ export default function NotesPanel() {
     await fetchNotes();
   };
 
+  const filteredNotes = useMemo(() => {
+    if (!searchQuery.trim()) return notes;
+    const q = searchQuery.toLowerCase();
+    return notes.filter(
+      (n) =>
+        n.title.toLowerCase().includes(q) ||
+        (n.content || "").toLowerCase().includes(q) ||
+        (n.subject || "").toLowerCase().includes(q)
+    );
+  }, [notes, searchQuery]);
+
   const handleExportNote = (note: Note) => {
-    const container = document.createElement("div");
-    const root = document.createElement("div");
-    // Render markdown to HTML for export
     import("react-dom/server").then(({ renderToStaticMarkup }) => {
       const html = renderToStaticMarkup(<ReactMarkdown>{note.content || ""}</ReactMarkdown>);
       try {
@@ -100,17 +108,6 @@ export default function NotesPanel() {
       </div>
     );
   }
-
-  const filteredNotes = useMemo(() => {
-    if (!searchQuery.trim()) return notes;
-    const q = searchQuery.toLowerCase();
-    return notes.filter(
-      (n) =>
-        n.title.toLowerCase().includes(q) ||
-        (n.content || "").toLowerCase().includes(q) ||
-        (n.subject || "").toLowerCase().includes(q)
-    );
-  }, [notes, searchQuery]);
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
