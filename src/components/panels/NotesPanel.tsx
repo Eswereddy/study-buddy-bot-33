@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Plus, BookOpen, Loader2, Trash2, Download, Search, Pencil, Save, X } from "lucide-react";
+import { Plus, BookOpen, Loader2, Trash2, Download, Search, Pencil, Save, X, FileText, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
