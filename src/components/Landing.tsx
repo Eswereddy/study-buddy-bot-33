@@ -21,6 +21,9 @@ export default function Landing({ onGetStarted }: LandingProps) {
     <div className="min-h-screen">
       {/* Hero */}
       <section className="hero-gradient relative overflow-hidden">
+        <div className="absolute top-4 right-4 z-20">
+          <ThemeToggle />
+        </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(162,63%,45%,0.2),transparent_60%)]" />
         <div className="container mx-auto px-6 py-24 md:py-36 relative z-10">
           <motion.div
