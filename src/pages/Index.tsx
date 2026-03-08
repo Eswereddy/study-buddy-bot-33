@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/components/Landing";
 import Dashboard from "@/components/Dashboard";
@@ -6,6 +7,7 @@ import { Loader2 } from "lucide-react";
 
 const Index = () => {
   const { user, loading } = useAuth();
+  const [showAuth, setShowAuth] = useState(false);
 
   if (loading) {
     return (
@@ -16,8 +18,8 @@ const Index = () => {
   }
 
   if (user) return <Dashboard />;
-
-  return <AuthPage />;
+  if (showAuth) return <AuthPage onBack={() => setShowAuth(false)} />;
+  return <Landing onGetStarted={() => setShowAuth(true)} />;
 };
 
 export default Index;
