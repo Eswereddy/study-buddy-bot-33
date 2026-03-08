@@ -34,6 +34,7 @@ export default function Dashboard() {
     chat: <ChatPanel />,
     schedule: <SchedulePanel />,
     progress: <ProgressPanel />,
+    profile: <ProfilePanel />,
   };
 
   return (
