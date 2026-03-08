@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Upload, FileText, Sparkles, Loader2, File } from "lucide-react";
+import { Upload, FileText, Sparkles, Loader2, File, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { callStudyAI } from "@/lib/ai";
@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
+import { exportToPdf } from "@/lib/export-pdf";
 
 export default function SummaryPanel() {
   const { user } = useAuth();
@@ -99,6 +100,17 @@ export default function SummaryPanel() {
     setMode("choose");
   };
 
+  const handleExportSummary = () => {
+    import("react-dom/server").then(({ renderToStaticMarkup }) => {
+      const html = renderToStaticMarkup(<ReactMarkdown>{summary}</ReactMarkdown>);
+      try {
+        exportToPdf(fileName ? `Summary — ${fileName}` : "AI Summary", html);
+      } catch (err: any) {
+        toast.error(err.message);
+      }
+    });
+  };
+
   if (summary) {
     return (
       <div className="max-w-2xl mx-auto space-y-4 animate-fade-in">
@@ -118,7 +130,12 @@ export default function SummaryPanel() {
             <ReactMarkdown>{summary}</ReactMarkdown>
           </div>
         </div>
-        <Button variant="outline" onClick={reset}>Summarize Another</Button>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={reset}>Summarize Another</Button>
+          <Button variant="outline" onClick={handleExportSummary}>
+            <Download className="h-4 w-4 mr-1" /> Export PDF
+          </Button>
+        </div>
       </div>
     );
   }

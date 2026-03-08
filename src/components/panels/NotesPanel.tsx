@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Plus, BookOpen, Loader2, Trash2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Plus, BookOpen, Loader2, Trash2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { callStudyAI } from "@/lib/ai";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
+import { exportToPdf } from "@/lib/export-pdf";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Note = Tables<"notes">;
@@ -63,12 +64,31 @@ export default function NotesPanel() {
     await fetchNotes();
   };
 
+  const handleExportNote = (note: Note) => {
+    const container = document.createElement("div");
+    const root = document.createElement("div");
+    // Render markdown to HTML for export
+    import("react-dom/server").then(({ renderToStaticMarkup }) => {
+      const html = renderToStaticMarkup(<ReactMarkdown>{note.content || ""}</ReactMarkdown>);
+      try {
+        exportToPdf(note.title, html);
+      } catch (err: any) {
+        toast.error(err.message);
+      }
+    });
+  };
+
   if (selectedNote) {
     return (
       <div className="max-w-2xl mx-auto space-y-4 animate-fade-in">
-        <Button variant="ghost" size="sm" onClick={() => setSelectedNote(null)}>
-          ← Back to notes
-        </Button>
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" size="sm" onClick={() => setSelectedNote(null)}>
+            ← Back to notes
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => handleExportNote(selectedNote)}>
+            <Download className="h-4 w-4 mr-1" /> Export PDF
+          </Button>
+        </div>
         <h2 className="font-heading text-xl font-bold">{selectedNote.title}</h2>
         <p className="text-xs text-muted-foreground">
           {selectedNote.subject} · {new Date(selectedNote.created_at).toLocaleDateString()}
