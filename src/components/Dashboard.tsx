@@ -84,7 +84,24 @@ export default function Dashboard() {
             </button>
           ))}
         </nav>
-        <div className="p-3 border-t border-sidebar-border">
+        <div className="p-3 border-t border-sidebar-border space-y-2">
+          <button
+            onClick={() => { setActiveTab("profile"); setSidebarOpen(false); }}
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors"
+          >
+            <Avatar className="h-8 w-8 border border-sidebar-border">
+              <AvatarImage src={profile.avatar_url || undefined} alt={profile.display_name || "User"} />
+              <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                {profile.display_name
+                  ? profile.display_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+                  : "U"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="text-left truncate">
+              <p className="truncate font-medium text-sm">{profile.display_name || "User"}</p>
+              <p className="truncate text-xs text-sidebar-foreground/50">{user?.email}</p>
+            </div>
+          </button>
           <button
             onClick={signOut}
             className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-colors"
