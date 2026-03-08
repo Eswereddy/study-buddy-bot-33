@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Plus, BookOpen, Loader2, Trash2, Download, Search } from "lucide-react";
+import { Plus, BookOpen, Loader2, Trash2, Download, Search, Pencil, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +22,10 @@ export default function NotesPanel() {
   const [subject, setSubject] = useState("");
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editContent, setEditContent] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const fetchNotes = async () => {
     if (!user) return;
@@ -65,6 +69,39 @@ export default function NotesPanel() {
     await fetchNotes();
   };
 
+  const startEditing = (note: Note) => {
+    setEditing(true);
+    setEditTitle(note.title);
+    setEditContent(note.content || "");
+  };
+
+  const cancelEditing = () => {
+    setEditing(false);
+    setEditTitle("");
+    setEditContent("");
+  };
+
+  const saveNote = async () => {
+    if (!selectedNote || !editTitle.trim()) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("notes")
+        .update({ title: editTitle, content: editContent })
+        .eq("id", selectedNote.id);
+      if (error) throw error;
+      const updated = { ...selectedNote, title: editTitle, content: editContent };
+      setSelectedNote(updated);
+      setEditing(false);
+      await fetchNotes();
+      toast.success("Note saved!");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const filteredNotes = useMemo(() => {
     if (!searchQuery.trim()) return notes;
     const q = searchQuery.toLowerCase();
@@ -91,20 +128,58 @@ export default function NotesPanel() {
     return (
       <div className="max-w-2xl mx-auto space-y-4 animate-fade-in">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={() => setSelectedNote(null)}>
+          <Button variant="ghost" size="sm" onClick={() => { setSelectedNote(null); cancelEditing(); }}>
             ← Back to notes
           </Button>
-          <Button variant="outline" size="sm" onClick={() => handleExportNote(selectedNote)}>
-            <Download className="h-4 w-4 mr-1" /> Export PDF
-          </Button>
+          <div className="flex gap-2">
+            {editing ? (
+              <>
+                <Button variant="ghost" size="sm" onClick={cancelEditing}>
+                  <X className="h-4 w-4 mr-1" /> Cancel
+                </Button>
+                <Button size="sm" onClick={saveNote} disabled={saving || !editTitle.trim()}>
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Save className="h-4 w-4 mr-1" />}
+                  Save
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" size="sm" onClick={() => startEditing(selectedNote)}>
+                  <Pencil className="h-4 w-4 mr-1" /> Edit
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => handleExportNote(selectedNote)}>
+                  <Download className="h-4 w-4 mr-1" /> Export PDF
+                </Button>
+              </>
+            )}
+          </div>
         </div>
-        <h2 className="font-heading text-xl font-bold">{selectedNote.title}</h2>
-        <p className="text-xs text-muted-foreground">
-          {selectedNote.subject} · {new Date(selectedNote.created_at).toLocaleDateString()}
-        </p>
-        <div className="bg-card rounded-xl border border-border p-6 prose prose-sm max-w-none text-foreground/80">
-          <ReactMarkdown>{selectedNote.content || ""}</ReactMarkdown>
-        </div>
+        {editing ? (
+          <>
+            <Input
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              className="font-heading text-xl font-bold"
+              placeholder="Note title"
+            />
+            <Textarea
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              className="min-h-[300px] font-mono text-sm"
+              placeholder="Write your note content (Markdown supported)..."
+            />
+          </>
+        ) : (
+          <>
+            <h2 className="font-heading text-xl font-bold">{selectedNote.title}</h2>
+            <p className="text-xs text-muted-foreground">
+              {selectedNote.subject} · {new Date(selectedNote.created_at).toLocaleDateString()}
+            </p>
+            <div className="bg-card rounded-xl border border-border p-6 prose prose-sm max-w-none text-foreground/80">
+              <ReactMarkdown>{selectedNote.content || ""}</ReactMarkdown>
+            </div>
+          </>
+        )}
       </div>
     );
   }
