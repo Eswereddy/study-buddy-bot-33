@@ -2,3 +2,6 @@ project_id = "jeqpnxkobkhysvbqivrl"
 
 [functions.study-ai]
 verify_jwt = false
+
+[functions.extract-pdf]
+verify_jwt = false
