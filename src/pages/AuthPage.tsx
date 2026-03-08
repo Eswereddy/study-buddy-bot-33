@@ -3,10 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GraduationCap, Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { GraduationCap, Mail, Lock, User, ArrowRight, Loader2, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 
-export default function AuthPage() {
+interface AuthPageProps {
+  onBack?: () => void;
+}
+
+export default function AuthPage({ onBack }: AuthPageProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
