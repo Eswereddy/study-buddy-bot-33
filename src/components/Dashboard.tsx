@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { BookOpen, Brain, MessageCircle, Calendar, BarChart3, FileText, Menu, X, GraduationCap, LogOut, UserCircle } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
